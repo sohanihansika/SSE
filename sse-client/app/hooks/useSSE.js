@@ -5,7 +5,7 @@ const useSSE = () => {
     const [userId, setUserId] = useState(null);
 
     useEffect(() => {
-        const eventSource = new EventSource("http://localhost:4000/events");
+        const eventSource = new EventSource("http://localhost:4005/events");
 
         eventSource.onmessage = (event) => {
             const data = JSON.parse(event.data);

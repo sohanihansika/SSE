@@ -9,7 +9,7 @@ export default function Home() {
     const [recipientIds, setRecipientIds] = useState("");
 
     const uploadFile = async () => {
-        await fetch("http://localhost:4000/files/upload", {
+        await fetch("http://localhost:4005/files/upload", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ senderId: userId, recipientIds, filename })
