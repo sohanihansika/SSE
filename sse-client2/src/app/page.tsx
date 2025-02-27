@@ -1,6 +1,7 @@
-'use client';
+"use client";
 
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import useSSE from "./hooks/useSSE";
 
 export default function Home() {
@@ -8,13 +9,21 @@ export default function Home() {
     const [filename, setFilename] = useState("");
     const [recipientIds, setRecipientIds] = useState("");
 
-    const uploadFile = async () => {
-        await fetch("http://localhost:4000/files/upload", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ senderId: userId, recipientIds, filename })
-        });
-    };
+    const uploadFileMutation = useMutation({
+        mutationFn: async () => {
+            const response = await fetch("http://localhost:4000/files/upload", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ senderId: userId, recipientIds, filename }),
+            });
+
+            if (!response.ok) {
+                throw new Error("File upload failed");
+            }
+
+            return response.json();
+        },
+    });
 
     return (
         <div className="home-container">
@@ -44,8 +53,8 @@ export default function Home() {
                 </div>
 
                 <button 
-                    onClick={uploadFile}
-                    disabled={!recipientIds || !filename}
+                    onClick={() => uploadFileMutation.mutate()}
+                    disabled={!recipientIds || !filename }
                     className={`home-button ${
                         !recipientIds || !filename ? "home-button-disabled" : "home-button-enabled"
                     }`}
@@ -55,7 +64,7 @@ export default function Home() {
 
                 <h2 className="home-updates-title">Updates:</h2>
                 <ul>
-                    {messages.map((msg: { message: string }, index) => (
+                    {messages.map((msg, index) => (
                         <li key={index} className="home-message">
                             {msg.message}
                         </li>
