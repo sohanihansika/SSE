@@ -14,13 +14,19 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FilesController = void 0;
 const common_1 = require("@nestjs/common");
-const files_service_1 = require("./files.service");
+const cqrs_1 = require("@nestjs/cqrs");
+const upload_file_command_1 = require("./commands/upload-file.command");
+const get_files_query_1 = require("./queries/get-files.query");
 let FilesController = class FilesController {
-    constructor(filesService) {
-        this.filesService = filesService;
+    constructor(commandBus, queryBus) {
+        this.commandBus = commandBus;
+        this.queryBus = queryBus;
     }
-    uploadFile(senderId, recipientIds, fileName) {
-        return this.filesService.uploadFile(senderId, recipientIds, fileName);
+    async uploadFile(senderId, recipientIds, fileName) {
+        return this.commandBus.execute(new upload_file_command_1.UploadFileCommand(senderId, recipientIds, fileName));
+    }
+    async getFiles(userId) {
+        return this.queryBus.execute(new get_files_query_1.GetFilesQuery(userId));
     }
 };
 exports.FilesController = FilesController;
@@ -31,10 +37,18 @@ __decorate([
     __param(2, (0, common_1.Body)('filename')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, String, String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], FilesController.prototype, "uploadFile", null);
+__decorate([
+    (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)('userId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], FilesController.prototype, "getFiles", null);
 exports.FilesController = FilesController = __decorate([
     (0, common_1.Controller)('files'),
-    __metadata("design:paramtypes", [files_service_1.FilesService])
+    __metadata("design:paramtypes", [cqrs_1.CommandBus,
+        cqrs_1.QueryBus])
 ], FilesController);
 //# sourceMappingURL=files.controller.js.map
