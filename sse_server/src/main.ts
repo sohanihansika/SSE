@@ -6,7 +6,7 @@ async function bootstrap() {
 
   app.enableCors({ origin: "http://localhost:3000" });
 
-  await app.listen(process.env.PORT ?? 4000);
-  console.log("NestJs SSE serer is running on port 4000")
+  await app.listen(process.env.PORT ?? 4005);
+  // console.log("NestJs SSE serer is running on port 4005")
 }
 bootstrap();
